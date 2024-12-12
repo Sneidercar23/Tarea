@@ -1,0 +1,180 @@
+using System;
+using System.Collections.Generic;
+
+namespace SistemaVentaComputadoras
+{
+    // Clase base para usuarios
+    public class Usuario
+    {
+        public string Correo { get; set; }
+        public string Contrasena { get; set; }
+
+        public Usuario(string correo, string contrasena)
+        {
+            Correo = correo;
+            Contrasena = contrasena;
+        }
+
+        public bool Autenticar(string correo, string contrasena)
+        {
+            return Correo == correo && Contrasena == contrasena;
+        }
+    }
+
+    // Clase para representar productos
+    public class Producto
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public decimal Precio { get; set; }
+
+        public Producto(int id, string nombre, decimal precio)
+        {
+            Id = id;
+            Nombre = nombre;
+            Precio = precio;
+        }
+    }
+
+    // Clase para gestionar operaciones del sistema
+    public class SistemaVenta
+    {
+        private List<Producto> Catalogo = new List<Producto>();
+        private List<string> HistorialCompras = new List<string>();
+
+        public SistemaVenta()
+        {
+            // Inicializar con algunos productos
+            Catalogo.Add(new Producto(1, "Laptop HP", 1500.99m));
+            Catalogo.Add(new Producto(2, "Monitor Samsung", 250.75m));
+            Catalogo.Add(new Producto(3, "Teclado Mecánico", 45.99m));
+        }
+
+        public void VerCatalogo()
+        {
+            Console.WriteLine("\nCatálogo de Productos:");
+            foreach (var producto in Catalogo)
+            {
+                Console.WriteLine($"ID: {producto.Id} | {producto.Nombre} | Precio: ${producto.Precio}");
+            }
+        }
+
+        public void IngresarProducto(int id, string nombre, decimal precio)
+        {
+            Catalogo.Add(new Producto(id, nombre, precio));
+            Console.WriteLine("Producto ingresado exitosamente.");
+        }
+
+        public void EliminarProducto(int id)
+        {
+            var producto = Catalogo.Find(p => p.Id == id);
+            if (producto != null)
+            {
+                Catalogo.Remove(producto);
+                Console.WriteLine("Producto eliminado exitosamente.");
+            }
+            else
+            {
+                Console.WriteLine("Producto no encontrado.");
+            }
+        }
+
+        public void RegistrarCompra(string detalleCompra)
+        {
+            HistorialCompras.Add(detalleCompra);
+            Console.WriteLine("Compra registrada exitosamente.");
+        }
+
+        public void ConsultarHistorial()
+        {
+            Console.WriteLine("\nHistorial de Compras:");
+            if (HistorialCompras.Count == 0)
+            {
+                Console.WriteLine("No hay compras registradas.");
+                return;
+            }
+
+            foreach (var compra in HistorialCompras)
+            {
+                Console.WriteLine(compra);
+            }
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Usuario usuario = new Usuario("usuario@ejemplo.com", "12345");
+            SistemaVenta sistema = new SistemaVenta();
+
+            Console.WriteLine("Bienvenido al sistema de venta de computadoras.");
+            Console.Write("Ingrese su correo electrónico: ");
+            string correo = Console.ReadLine();
+            Console.Write("Ingrese su contraseña: ");
+            string contrasena = Console.ReadLine();
+
+            if (usuario.Autenticar(correo, contrasena))
+            {
+                Console.WriteLine("\nAutenticación exitosa.\n");
+                int opcion;
+                do
+                {
+                    Console.WriteLine("Seleccione una opción:");
+                    Console.WriteLine("1. Ver Catálogo de Productos");
+                    Console.WriteLine("2. Ingresar Producto");
+                    Console.WriteLine("3. Eliminar Producto");
+                    Console.WriteLine("4. Registrar Compra");
+                    Console.WriteLine("5. Consultar Historial de Compras");
+                    Console.WriteLine("0. Salir");
+                    Console.Write("Opción: ");
+
+                    if (!int.TryParse(Console.ReadLine(), out opcion))
+                    {
+                        Console.WriteLine("Opción inválida. Intente nuevamente.");
+                        continue;
+                    }
+
+                    switch (opcion)
+                    {
+                        case 1:
+                            sistema.VerCatalogo();
+                            break;
+                        case 2:
+                            Console.Write("Ingrese ID del producto: ");
+                            int id = int.Parse(Console.ReadLine());
+                            Console.Write("Ingrese nombre del producto: ");
+                            string nombre = Console.ReadLine();
+                            Console.Write("Ingrese precio del producto: ");
+                            decimal precio = decimal.Parse(Console.ReadLine());
+                            sistema.IngresarProducto(id, nombre, precio);
+                            break;
+                        case 3:
+                            Console.Write("Ingrese ID del producto a eliminar: ");
+                            int idEliminar = int.Parse(Console.ReadLine());
+                            sistema.EliminarProducto(idEliminar);
+                            break;
+                        case 4:
+                            Console.Write("Ingrese detalle de la compra: ");
+                            string detalleCompra = Console.ReadLine();
+                            sistema.RegistrarCompra(detalleCompra);
+                            break;
+                        case 5:
+                            sistema.ConsultarHistorial();
+                            break;
+                        case 0:
+                            Console.WriteLine("Saliendo del sistema. Hasta luego.");
+                            break;
+                        default:
+                            Console.WriteLine("Opción no válida. Intente nuevamente.");
+                            break;
+                    }
+                } while (opcion != 0);
+            }
+            else
+            {
+                Console.WriteLine("Autenticación fallida. Verifique sus credenciales.");
+            }
+        }
+    }
+}
